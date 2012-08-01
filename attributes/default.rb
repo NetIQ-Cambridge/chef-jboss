@@ -9,15 +9,15 @@
 
 
 default['jboss']['home'] = "/usr/local/jboss"
-default['jboss']['version'] = "7.1.0"
-default['jboss']['url'] = "http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.tar.gz" 
-default['jboss']['checksum'] = "88fd3fdac4f7951cee3396eff3d70e8166c3319de82d77374a24e3b422e0b2ad"
-default['jboss']['version'] = '7.1.1'
+default['jboss']['url'] = "http://sourceforge.net/projects/jboss/files/JBoss/JBoss-5.0.1.GA/jboss-5.0.1.GA.zip/download" 
+default['jboss']['checksum'] = "d3274c0c5db33d98a0cdb703d829b833a8c3250e009e5d1843956dd22d182dd8"
 default['jboss']['user'] = "jboss"
+default['jboss']['group'] = "jboss"
 default['jboss']['application'] = 'jboss'
 default['jboss']['config'] = 'standalone'
 default['jboss']['script'] = 'standalone.sh'
 default['jboss']['manage_config_file'] = true
+default['jboss']['setup_init_scripts'] = true
 
 default['jboss']['jdbc']['user'] = 'sa'
 default['jboss']['jdbc']['passwd'] = ''

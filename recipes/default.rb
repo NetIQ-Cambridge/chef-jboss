@@ -7,53 +7,53 @@
 # license Apache v2.0
 #
 
-jboss_home = node['jboss']['jboss_home']
-jboss_user = node['jboss']['jboss_user']
+jboss_home = node['jboss']['home']
+jboss_user = node['jboss']['user']
+jboss_group = node['jboss']['group']
 
-directory jboss_parent do
-  group jboss_user
-  owner jboss_user
-  mode "0755"
-end
+jboss_home_parent = Pathname.new(jboss_home).parent().to_s
 
 # get files
-bash "put_files" do
-  code <<-EOH
-  cd /tmp
-  wget #{node['jboss']['dl_url']}
-  
-  tar xvzf #{tarball_name}.tar.gz -C #{jboss_parent}
-  chown -R jboss:jboss #{jboss_parent}
-  ln -s #{jboss_parent}/#{tarball_name} #{jboss_home}
-  rm -f #{tarball_name}.tar.gz
-  EOH
-  not_if "test -d #{jboss_home}"
+ark 'jboss' do
+  url node['jboss']['url']
+  checksum node['jboss']['checksum']
+  extension 'zip'
+  path jboss_home_parent
+  owner node['jboss']['user']
+  action :put
+  not_if {File.exists?(jboss_home)}
 end
-
 
 # set perms on directory
 directory jboss_home do
-  group jboss_user
+  group jboss_group
   owner jboss_user
   mode "0755"
 end
 
+execute "chown" do
+  creates "#{jboss_home}/.installed"
+  command "chown -R #{jboss_user}:#{jboss_group} #{jboss_home} && touch #{jboss_home}/.installed"
+  action :run
+end
+
 # template init file
-template "/etc/init.d/jboss" do
-  if platform? ["centos", "redhat"] 
-    source "init_el.erb"
-  else
-    source "init_deb.erb"
+if node['jboss']['setup_init_scripts']
+  template "/etc/init.d/jboss" do
+    if platform? ["centos", "redhat", "suse"] 
+      source "init_standalone_el.erb"
+    else
+      source "init_deb.erb"
+    end
+    mode "0755"
+    owner "root"
+    group "root"
   end
-  mode "0755"
-  owner "root"
-  group "root"
+
+  # template jboss-log4j.xml
+
+  # start service
+  service jboss_user do
+    action [ :enable, :start ]
+  end
 end
-
-# template jboss-log4j.xml
-
-# start service
-service jboss_user do
-  action [ :enable, :start ]
-end
-

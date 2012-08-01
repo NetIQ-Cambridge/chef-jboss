@@ -11,6 +11,7 @@
     "centos": ">= 0.0.0",
     "redhat": ">= 0.0.0",
     "fedora": ">= 0.0.0"
+    "suse": ">= 0.0.0"
   },
   "dependencies": {
     "java": ">= 0.0.0"
